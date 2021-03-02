@@ -1,0 +1,101 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+#canvas2 {
+    font-family: 'City-light', monospace;
+    color: #33ff66;
+    font-weight: bolder;
+    display: inline-block;
+    transform: scale(1.2, 1);
+    transform-origin: left center;
+    text-transform: uppercase;
+    letter-spacing: 0.2vh;
+    text-indent: 0.2vh;
+    font-size: 1.9vh;
+    line-height: 2.7vh;
+    max-width: 83%;
+    margin: 0 auto;
+    padding: 6vw 10vw;
+    overflow: hidden;
+    a {
+        color: orange;
+        text-decoration: none;
+        &:hover {
+            color: complement(orange);
+        }
+    }
+}
+
+#main-footer {
+    position: absolute;
+    bottom: 0; // left: 0;
+    width: 100%;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15vw 4vh;
+    a {
+        color: #33ff66;
+        text-decoration: none;
+        &:hover {
+            color: complement(#33ff66);
+        }
+    }
+}
+
+@media screen and (max-width: 749px) and (orientation: landscape) {
+    #canvas2 {
+        letter-spacing: 0.2vw;
+        text-indent: 0.2vw;
+        font-size: 1.7vw;
+        line-height: 2.2vw;
+        padding: 1rem 3rem;
+    }
+}
+
+@media screen and (min-width: 360px) {
+    #main-footer {
+        font-size: 1rem; // padding: 0 16vw 4vh;
+    }
+}
+
+@media screen and (min-width: 640px) {
+    #main-footer {
+        font-size: 1.2rem;
+        justify-content: center;
+        a {
+            padding: 0 2rem;
+        }
+    }
+}
+
+@media screen and (min-width: 770px) {
+    #canvas2 {
+        letter-spacing: 0.1rem;
+        text-indent: 0.1rem;
+        font-size: 1rem;
+        line-height: 1.5rem;
+        padding: 5rem 12rem;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    #canvas2 {
+        padding: 5rem 12rem;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    #canvas2 {
+        padding: 8rem 26rem;
+    }
+}

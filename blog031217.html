@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Blog | 3 December 2017</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f1f1f0" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <!--build:css css/blog.min.css async-->
+    <link rel="stylesheet" href="css/blog.css" />
+    <link rel="stylesheet" href="css/prism.css" />
+    <!--endbuild-->
+    <style>
+        @font-face {
+            font-family: 'SavoyRoman';
+            src: url('css/fonts/Savoy-Roman-webfont.woff2') format('woff2');
+        }
+    </style>
+    <script src="js/fontawesome-all.min.js" async></script>
+</head>
+
+<body>
+    <!--build:js js/prism.min.js -->
+    <script src="js/prism.js"></script>
+    <!-- endbuild -->
+
+    <div class="wrapper">
+        <div class="container">
+            <img src="images/StockSnap_YM1V8KLYPK_crop.jpg" alt="Cloudy sky and sea between two towering rocky outcrops">
+            <div class="centered">
+                <header class="main-header">
+                    <a href="index.html">FELIXINUTERO</a>
+                </header>
+                <div class="main-nav">
+                    <div>
+                        <a href="index.html">WORK</a>
+                    </div>
+                    <div>
+                        <a href="blog.html">BLOG</a>
+                    </div>
+                    <div>
+                        <a href="aframe_text.html">INFO</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <article class="content" role="main">
+            <h1>Progressive Web Apps, and Physics with Three.js</h1>
+            <h3>3 DECEMBER 2017</h3>
+            <p>I got my site working as a Progressive Web App! Yay!
+            </p>
+            <p>I adapted the example from Google's
+                <a href="https://developers.google.com/web/fundamentals/codelabs/your-first-pwapp/">codelab</a>, including the use of
+                <a href="https://github.com/GoogleChromeLabs/sw-precache">sw-precache</a> and the addition of the following task to my gulpfile:</p>
+            <figure>
+                <figcaption></figcaption>
+                <pre>
+                    <code class="language-js">
+gulp.task('generate-service-worker', function (callback) {
+    
+    var swPrecache = require('sw-precache');
+    var rootDir = 'dist';
+
+    swPrecache.write(`${rootDir}/service-worker.js`, {
+        staticFileGlobs: [rootDir + '/**/*.{js,min.js,html,min.css,png,jpg,gif,webp,ico,svg,eot,ttf,woff,woff2,json}'],
+        stripPrefix: rootDir
+    }, callback);
+});</code>
+                </pre>
+            </figure>
+            <p>(FYI - I'm using
+                <a href="http://prismjs.com/">Prism</a> for code formatting.)</p>
+            <p>
+                <i>Then</i>, I tried to get
+                <a href="https://threejs.org/examples/#webgl_physics_convex_break">this</a> insanely cool Three.js demo running in VR...</p>
+            <p>I managed to get the camera where I wanted by attaching it to a 'camBox' - a technique I saw in the recent
+                <a href="https://threejs.org/examples/#webvr_gearvr">GearVR demo</a>. It just didn't seem to want to play ball, as it were, without it; animating it is another
+                story...
+            </p>
+            <p>On another note: I just did some reading into how to hide scrollbars in Firefox. You can't. Someone reported
+                it as a bug in 2000, and no-one's fixed it yet. Then I found out that Chrome currently has a 76% market share,
+                so I guess I'll just ignore everything else. Sorry, 14% of web users!</p>
+            <p>I got an
+                <a href="https://docs.google.com/forms/d/1OTvEk-VfavyKkMxef0Tvs0RFycl9NNu1vdg3FrqJhX8/viewform?edit_requested=true">Origin Trial</a> from Google so visitors to my site don't have to flip all the WebVR stuff on in chrome:
+                flags. It seemed to bork the site on regular Chrome, so I tried it on Chrome Beta and it's been smooth sailing
+                ever since.</p>
+        </article>
+        <footer class="main-footer">
+            <a href="https://twitter.com/felixinutero" aria-label="Go to Twitter">
+                <i class="fab fa-twitter" aria-hidden="true">
+                </i>
+            </a>
+            <a href="https://www.instagram.com/therealfelixinutero/" aria-label="Go to Instagram">
+                <i class="fab fa-instagram" aria-hidden="true">
+                </i>
+            </a>
+            <a href="https://www.pinterest.com.au/felixinutero/" aria-label="Go to Pinterest">
+                <i class="fab fa-pinterest-p" aria-hidden="true">
+                </i>
+            </a>
+            <a href="https://github.com/felixinutero/felixinuterodotcom" aria-label="Go to GitHub">
+                <i class="fab fa-github" aria-hidden="true">
+                </i>
+            </a>
+            <a href="mailto:felixinutero@gmail.com" aria-label="Send an Email">
+                <i class="far fa-envelope" aria-hidden="true">
+                </i>
+            </a>
+            <a href="https://www.linkedin.com/in/john-reynolds-7349a4134/" aria-label="Go to LinkedIn">
+                <i class="fab fa-linkedin" aria-hidden="true">
+                </i>
+            </a>
+        </footer>
+    </div>
+</body>
+
+</html>

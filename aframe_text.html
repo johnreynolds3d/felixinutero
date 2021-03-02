@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>About</title>
+    <meta charset="utf-8">
+    <meta name="theme-color" content="#132B5B" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <script src="https://aframe.io/releases/0.7.1/aframe.min.js"></script>
+    <script src="https://rawgit.com/feiss/aframe-environment-component/master/dist/aframe-environment-component.min.js"></script>
+    <!--build:css css/aframe_text.min.css-->
+    <link rel="stylesheet" href="css/aframe_text.css" />
+    <!--endbuild-->
+    <script src="js/fontawesome-all.min.js"></script>
+</head>
+
+<body>
+    <header class="main-header">
+        <a href="index.html">FELIXINUTERO</a>
+    </header>
+    <div class="main-nav">
+        <div>
+            <a href="index.html">WORK</a>
+        </div>
+        <div>
+            <a href="blog.html">BLOG</a>
+        </div>
+        <div>
+            <a href="aframe_text.html">INFO</a>
+        </div>
+    </div>
+    <footer class="main-footer">
+        <a href="https://twitter.com/felixinutero" aria-label="Go to Twitter">
+            <i class="fab fa-twitter" aria-hidden="true">
+            </i>
+        </a>
+        <a href="https://www.instagram.com/therealfelixinutero/" aria-label="Go to Instagram">
+            <i class="fab fa-instagram" aria-hidden="true">
+            </i>
+        </a>
+        <a href="https://www.pinterest.com.au/felixinutero/" aria-label="Go to Pinterest">
+            <i class="fab fa-pinterest-p" aria-hidden="true">
+            </i>
+        </a>
+        <a href="https://github.com/felixinutero/felixinuterodotcom" aria-label="Go to GitHub">
+            <i class="fab fa-github" aria-hidden="true">
+            </i>
+        </a>
+        <a href="mailto:felixinutero@gmail.com" aria-label="Send an Email">
+            <i class="far fa-envelope" aria-hidden="true">
+            </i>
+        </a>
+        <a href="https://www.linkedin.com/in/john-reynolds-7349a4134/" aria-label="Go to LinkedIn">
+            <i class="fab fa-linkedin" aria-hidden="true">
+            </i>
+        </a>
+    </footer>
+    </div>
+
+    <a-scene vr-mode-ui="enabled: false">
+        <a-entity environment="preset: tron"></a-entity>
+        <a-light type="ambient" color="#445451"></a-light>
+
+        <a-entity position="0 1.8 2">
+            <a-entity camera look-controls wasd-controls>
+                <a-entity position="0 0 -1" text="color: #33ff66; align: left; width: 0.8; font: kelsonsans; wrapCount: 31;
+                    value: Hi There! 
+                    
+                    My name is John Reynolds, and I'm a recent Computer Science graduate and software developer. 
+                    
+                    I'm excited about the potential of the web as an extended-reality platform connecting people all over the world with the information they need to live better lives. 
+                    
+                    This site serves as my portfolio, and I'll write about whatever I'm currently working on in my blog. 
+                            
+                    Thanks for visiting, and please feel free to contact me using the links below!"></a-entity>
+            </a-entity>
+        </a-entity>
+
+    </a-scene>
+
+</body>
+
+</html>

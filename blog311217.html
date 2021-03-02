@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Blog | 31 December 2017</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f1f1f0" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <!--build:css css/blog.min.css async-->
+    <link rel="stylesheet" href="css/blog.css" />
+    <link rel="stylesheet" href="css/prism.css" />
+    <!--endbuild-->
+    <style>
+        @font-face {
+            font-family: 'SavoyRoman';
+            src: url('css/fonts/Savoy-Roman-webfont.woff2') format('woff2');
+        }
+    </style>
+    <script src="js/fontawesome-all.min.js" async></script>
+</head>
+
+<body>
+    <script src="js/three.min.js"></script>
+    <script src="js/controls/OrbitControls.min.js"></script>
+    <!--build:js js/prism.min.js -->
+    <script src="js/prism.js"></script>
+    <!-- endbuild -->
+
+    <div class="wrapper">
+        <div class="container">
+            <img src="images/StockSnap_YM1V8KLYPK_crop.jpg" alt="Cloudy sky and sea between two towering rocky outcrops">
+            <div class="centered">
+                <header class="main-header">
+                    <a href="index.html">FELIXINUTERO</a>
+                </header>
+                <div class="main-nav">
+                    <div>
+                        <a href="index.html">WORK</a>
+                    </div>
+                    <div>
+                        <a href="blog.html">BLOG</a>
+                    </div>
+                    <div>
+                        <a href="aframe_text.html">INFO</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <article class="content" role="main">
+
+            <h1>AI + WebXR = ?</h1>
+            <h3>31 DECEMBER 2017</h3>
+            <p>Time to get cracking on integrating some AI stuff with Three.js.</p>
+            <p> I'm going to begin by going through the labs for the AI unit I did during my last year at uni, and see if I can
+                get some of the more advanced stuff into my brain...</p>
+            <p>First up is an old chestnut: implement, test, and compare the performance of a bunch of sorting algorithms. This
+                shouldn't be too tricky, should it?
+            </p>
+            <br>
+            <p>
+                <h2>Lab 0: Sorting Algorithms</h2>
+                <ol>
+                    <li>Implement the Insertion Sort algorithm.</li>
+                    <li>Build a program to test your sorting algorithm. It should generate random lists of integers of various
+                        sizes, and then:
+                        <ol class="alpha">
+                            <li>Check list is in nondescending order</li>
+                            <li>Check set of elements is same as in original list</li>
+                            <li>Record time taken to sort</li>
+                        </ol>
+                    </li>
+                    <li>Implement a O(n log n) algorithm (Merge Sort, Quick Sort, Heap Sort, etc.) and compare it to your Insertion
+                        Sort algorithm.</li>
+                    <li>Research
+                        <i>Radix Sort</i>, then write and test your own implementation.</li>
+                    <li>Try to generate lists of integers where Radix Sort will out-perform your O(n log n) algorithm.</li>
+                </ol>
+            </p>
+            <p> OK then, here we go...
+                <figure>
+                    <figcaption>Insertion Sort (pseudocode):</figcaption>
+                    <pre>
+                        <code class="language-js">
+    procedure INSERTION-SORT(A)
+        for j = 2 to A.length
+            key = A[j]
+            i = j - 1
+            while i > 0 and A[i] > key
+                A[i + 1] = A[i]
+                i = i - 1
+            A[i + 1] = key
+                        </code>
+                    </pre>
+                </figure>
+
+                <figure>
+                    <figcaption>Insertion Sort (Javascript):</figcaption>
+                    <pre>
+                            <code class="language-js">
+    function insertionSort(A) {
+        for (var j = 1; j < A.length; j++) {
+            var key = A[j];
+            var i = j - 1;
+            while (i >= 0 && A[i] > key) {
+                A[i + 1] = A[i];
+                i--;
+            }
+            A[i + 1] = key;
+        }
+        return A;
+    }
+                            </code>
+                        </pre>
+                </figure>
+                </br>
+                <figure>
+                    <figcaption>Merge Sort (pseudocode):</figcaption>
+                    <pre>
+                                <code class="language-js">
+    procedure MERGE(A, p, q, r)
+        n1 = q - p + 1
+        n2 = r - q
+        let L[1..n1 + 1] be a new array
+        let R[1..n2 + 1] be a new array
+        for i = 1 to n1
+            L[i] = A[p + i - 1]
+        for j = 1 to n2
+            R[j] = A[q + j]
+        L[n1 + 1] = ∞
+        R[n2 + 1] = ∞
+        i = 1
+        j = 1
+        for k = p to r
+            if L[i] ≤ R[j]
+                A[k] = L[i]
+                i = i + 1
+            else
+                A[k] = R[j]
+                j = j + 1
+    
+    procedure MERGE-SORT(A, p, r)
+        if p > r
+            q = (p + r) / 2
+            MERGE-SORT(A, p, q)
+            MERGE-SORT(A, q + 1, r)
+            MERGE(A, p, q, r)
+                                </code>
+                            </pre>
+                </figure>
+
+                <figure>
+                    <figcaption>Merge Sort (Javascript):</figcaption>
+                    <pre>
+                                <code class="language-js">
+    function merge(A, p, q, r) {
+        var n1 = q - p + 1;
+        var n2 = r - q;
+        var L = [];
+        var R = [];
+        var i, j;
+        for (i = 0; i < n1; i++)
+            L[i] = A[p + i];
+        for (j = 0; j < n2; j++)
+            R[j] = A[q + j + 1];
+        L[n1] = Number.MAX_SAFE_INTEGER;
+        R[n2] = Number.MAX_SAFE_INTEGER;
+        i = 0;
+        j = 0;
+        for (var k = p; k <= r; k++) {
+            if (L[i] <= R[j]) {
+                A[k] = L[i];
+                i++;
+            } else {
+                A[k] = R[j];
+                j++;
+            }
+        }
+        return A;
+    }
+    
+    function mergeSort(A, p, r) {
+        if (p < r) {
+            var q = Math.floor((p + r) / 2);
+            mergeSort(A, p, q);
+            mergeSort(A, q + 1, r);
+            merge(A, p, q, r);
+        }
+        return A;
+    }
+                                </code>
+                            </pre>
+                </figure>
+                <br>
+                <figure>
+                    <figcaption>Counting Sort (pseudocode):</figcaption>
+                    <pre>
+                            <code class="language-js">
+    procedure COUNTING-SORT(A, B, k)
+        let C[0..k] be a new array
+        for i = 0 to k
+            C[i] = 0
+        for j = 1 to A.length
+            C[A[j]] =  C[A[j]] + 1
+        // C[i] now contains the number of elements equal to i
+        for i = 1 to k
+            C[i] += C[i - 1]
+        // C[i] now contains the number of elements less than or equal to i
+        for j = A.length down to 1
+            B[C[C[j]]] = A[j]
+            C[A[j]] = C[A[j]] - 1
+                            </code>
+                        </pre>
+                </figure>
+                <figure>
+                    <figcaption>Counting Sort (Javascript):</figcaption>
+                    <pre>
+                                <code class="language-js">
+    function countingSort(A, B, k) {
+        var C = [];
+        for (var i = 0; i <= k; i++)
+            C[i] = 0;
+        for (var j = 0; j < A.length; j++)
+            C[A[j]]++;
+        for (var i = 1; i <= k; i++)
+            C[i] = C[i] + C[i - 1];
+        for (var j = A.length - 1; j >= 0; j--) {
+            B[C[A[j]]] = A[j];
+            C[A[j]]--;
+        }
+        B.shift();
+        return B;
+    }
+                                </code>
+                            </pre>
+                </figure>
+            </p>
+            <br>
+
+            <button onclick="testSort()">Sort it!</button>
+
+            <form>
+                <br>List to sort
+                <br>
+                <textarea rows="9" id="list"></textarea>
+                <br>
+                <br>After sorting
+                <br>
+                <textarea rows="9" id="output"></textarea>
+                <br>
+                <br>Time for Insertion Sort (ms)
+                <br>
+                <textarea rows="1" id="timer1"></textarea>
+                <br>
+                <br>Time for Merge Sort (ms)
+                <br>
+                <textarea rows="1" id="timer2"></textarea>
+                <br>
+                <br>Time for Counting Sort (ms)
+                <br>
+                <textarea rows="1" id="timer3"></textarea>
+            </form>
+
+            <script>
+                function insertionSort(A) {
+                    for (var j = 1; j < A.length; j++) {
+                        var key = A[j];
+                        var i = j - 1;
+                        while (i >= 0 && A[i] > key) {
+                            A[i + 1] = A[i];
+                            i--;
+                        }
+                        A[i + 1] = key;
+                    }
+                    return A;
+                }
+
+                function merge(A, p, q, r) {
+                    var n1 = q - p + 1;
+                    var n2 = r - q;
+                    var L = [];
+                    var R = [];
+                    var i, j;
+                    for (i = 0; i < n1; i++)
+                        L[i] = A[p + i];
+                    for (j = 0; j < n2; j++)
+                        R[j] = A[q + j + 1];
+                    L[n1] = Number.MAX_SAFE_INTEGER;
+                    R[n2] = Number.MAX_SAFE_INTEGER;
+                    i = 0;
+                    j = 0;
+                    for (var k = p; k <= r; k++) {
+                        if (L[i] <= R[j]) {
+                            A[k] = L[i];
+                            i++;
+                        } else {
+                            A[k] = R[j];
+                            j++;
+                        }
+                    }
+                    return A;
+                }
+
+                function mergeSort(A, p, r) {
+                    if (p < r) {
+                        var q = Math.floor((p + r) / 2);
+                        mergeSort(A, p, q);
+                        mergeSort(A, q + 1, r);
+                        merge(A, p, q, r);
+                    }
+                    return A;
+                }
+
+                function countingSort(A, B, k) {
+                    var C = [];
+                    for (var i = 0; i <= k; i++)
+                        C[i] = 0;
+                    for (var j = 0; j < A.length; j++)
+                        C[A[j]]++;
+                    for (var i = 1; i <= k; i++)
+                        C[i] = C[i] + C[i - 1];
+                    for (var j = A.length - 1; j >= 0; j--) {
+                        B[C[A[j]]] = A[j];
+                        C[A[j]]--;
+                    }
+                    B.shift();
+                    return B;
+                }
+
+                function radixSort(A) {
+                    console.log(A);
+                    var C = [];
+                    for (var i = 0; i < A.length; i++) {
+                        if (A[i].toString().length > i) {
+
+                            console.log('A[i].toString().length: ' + A[i].toString().length);
+                            console.log('A[i].toString(): ' + A[i].toString());
+
+                            if (A[i][A[i].toString().length - (i + 1)] > i)
+                                C.push(A[i]);
+                            else
+                                C.shift(A[i]);
+                        }
+                        console.log(C);
+                    }
+                }
+            </script>
+
+            <script>
+                function testSort() {
+
+                    var startTime;
+
+                    var multiTimeInsertionSort = 0.0;
+                    var multiTimeMergeSort = 0.0;
+                    var multiTimeCountingSort = 0.0;
+
+                    var postInsertionSort, postMergeSort, postCountingSort, postRadixSort;
+
+                    var inputSet = [];
+                    var outputSet1 = [];
+                    var outputSet2 = [];
+                    var outputSet3 = [];
+
+                    // Length of list
+                    var l = Math.random() * 10;
+                    var preSort = [];
+
+                    // Run algorithms t times, with a different list each time
+                    var t = 1;
+                    for (var j = 0; j < t; j++) {
+
+                        // Populate list with 'random' integers between 0 and 999 inclusive
+                        for (var k = 0; k < l; k++)
+                            preSort.push(Math.floor(Math.random() * 1000));
+                        document.getElementById("list").innerHTML = preSort;
+
+                        // Sum processing times in milliseconds
+                        startTime = performance.now();
+                        postInsertionSort = insertionSort(preSort);
+                        multiTimeInsertionSort += (performance.now() - startTime);
+                        document.getElementById("output").innerHTML = postInsertionSort;
+
+                        startTime = performance.now();
+                        postMergeSort = mergeSort(preSort, 0, preSort.length - 1);
+                        multiTimeMergeSort += (performance.now() - startTime);
+
+                        var B = [];
+                        for (var i = 0; i < preSort.length; i++)
+                            B.push(0);
+
+                        var maxValue = 0;
+                        for (var i = 0; i < preSort.length; i++)
+                            if (preSort[i] > maxValue)
+                                maxValue = preSort[i];
+
+                        startTime = performance.now();
+                        postCountingSort = countingSort(preSort, B, maxValue);
+                        multiTimeCountingSort += (performance.now() - startTime);
+
+                        postRadixSort = radixSort(preSort);
+
+                        // Check elements are in nondescending order
+                        for (var i = 1; preSort.length > 1 && i < preSort.length; i++) {
+                            if (postInsertionSort[i - 1] > postInsertionSort[i] || postMergeSort[i - 1] > postMergeSort[
+                                    i] || postCountingSort[i - 1] > postCountingSort[i]) {
+                                document.getElementById("output").innerHTML = "List not in nondescending order!";
+                                return;
+                            }
+                        }
+
+                        for (var i = 0; i < preSort.length; i++) {
+
+                            if (!inputSet.includes(preSort[i]))
+                                inputSet.push(preSort[i]);
+
+                            if (!outputSet1.includes(postInsertionSort[i]))
+                                outputSet1.push(postInsertionSort[i]);
+
+                            if (!outputSet2.includes(postMergeSort[i]))
+                                outputSet2.push(postMergeSort[i]);
+
+                            if (!outputSet3.includes(postCountingSort[i]))
+                                outputSet3.push(postCountingSort[i]);
+                        }
+
+                        // Check elements in input and output are identical
+                        for (var i = 0; i < inputSet.length; i++)
+                            if (outputSet1[i] != inputSet[i] || outputSet2[i] != inputSet[i] || outputSet3[i] !=
+                                inputSet[i])
+                                return;
+                    }
+
+                    // Average processing time
+                    document.getElementById("timer1").innerHTML = multiTimeInsertionSort / t;
+                    document.getElementById("timer2").innerHTML = multiTimeMergeSort / t;
+                    document.getElementById("timer3").innerHTML = multiTimeCountingSort / t;
+                }
+            </script>
+            <br>
+            <p>(I accidentally implemented Counting Sort instead of Radix Sort, but I left it in 'cos it's an interesting approach.)
+                <br>
+                <br>HEY! Check out Sue Lockwood's
+                <a href="https://bocoup.com/blog/learning-three-js-with-real-world-challenges-that-have-already-been-solved">AMAZING</a> Three.js graph work! Definitely learning this...
+            </p>
+            <p>
+                Also:
+                <a href="worker.html">web worker demo</a>
+            </p>
+
+            <p>Now on to the comparisons...</p>
+            <div class="chart">
+                <canvas></canvas>
+            </div>
+
+            <script>
+                var renderer3 = new THREE.WebGLRenderer({
+                    antialias: true,
+                    canvas: document.querySelector(".chart canvas")
+                });
+                renderer3.shadowMap.enabled = true;
+                renderer3.setSize(window.innerWidth, window.innerHeight);
+                renderer3.setClearColor(0x000000);
+                renderer3.setPixelRatio(window.devicePixelRatio);
+
+                var camera3 = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100);
+                camera3.position.set(5, 4, 14);
+
+                var scene3 = new THREE.Scene();
+                scene3.background = new THREE.Color(0x00BFFF);
+
+                // Lights
+                var ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
+                scene3.add(ambientLight);
+
+                var directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
+                directionalLight.position.set(0, 5, 5);
+                scene3.add(directionalLight);
+
+                var d = 5;
+                directionalLight.castShadow = true;
+                directionalLight.shadow.camera.left = -d;
+                directionalLight.shadow.camera.right = d;
+                directionalLight.shadow.camera.top = d;
+                directionalLight.shadow.camera.bottom = -d;
+
+                directionalLight.shadow.camera.near = 1;
+                directionalLight.shadow.camera.far = 20;
+
+                directionalLight.shadow.mapSize.x = 1024;
+                directionalLight.shadow.mapSize.y = 1024;
+
+                var textureLoader = new THREE.TextureLoader();
+
+                // Ground
+                var ground = new THREE.Mesh(new THREE.BoxBufferGeometry(16, 0.2, 16, 1, 1, 1), new THREE.MeshPhongMaterial({
+                    color: 0xB2B0AE
+                }));
+                textureLoader.load("images/grid.png", function (texture) {
+                    texture.wrapS = THREE.RepeatWrapping;
+                    texture.wrapT = THREE.RepeatWrapping;
+                    texture.repeat.set(32, 32);
+                    ground.material.map = texture;
+                    ground.material.needsUpdate = true;
+                });
+                ground.castShadow = true;
+                ground.receiveShadow = true;
+                ground.position.set(0, -0.1, 0);
+                ground.receiveShadow = true;
+                scene3.add(ground);
+
+                var controls = new THREE.OrbitControls(camera3, renderer3.domElement);
+                controls.minDistance = 1;
+                controls.maxDistance = 25;
+
+                var data = [4, 76, 33, 90, 6, 18, 23];
+                var barPos = -3;
+
+                // Generate objects
+                for (var i = 0; i < data.length; i++) {
+
+                    var object = new THREE.Mesh(new THREE.BoxBufferGeometry(1, data[i] / 10, 1), new THREE.MeshLambertMaterial({
+                        color: Math.random() * 0xffffff
+                    }));
+
+                    object.position.set(barPos, data[i] / 20, 0);
+
+                    barPos += 1;
+
+                    object.castShadow = true;
+                    object.receiveShadow = true;
+                    object.material.transparent = true;
+
+                    scene3.add(object);
+                }
+
+                function resizeCanvasToDisplaySize3(force) {
+                    var canvas = renderer3.domElement;
+                    var width = canvas.clientWidth;
+                    var height = canvas.clientHeight;
+                    if (force || canvas.width !== width || canvas.height !== height) {
+
+                        // you must pass false here or three.js sadly fights the browser
+                        renderer3.setSize(width, height, false);
+                        camera3.aspect = width / height;
+                        camera3.updateProjectionMatrix();
+                    }
+                }
+
+                function animate3(time) {
+                    resizeCanvasToDisplaySize3();
+                    renderer3.render(scene3, camera3);
+                    requestAnimationFrame(animate3);
+                }
+
+                resizeCanvasToDisplaySize3(true);
+                requestAnimationFrame(animate3);
+            </script>
+        </article>
+        <footer class="main-footer">
+            <a href="https://twitter.com/felixinutero" aria-label="Go to Twitter">
+                <i class="fab fa-twitter" aria-hidden="true">
+                </i>
+            </a>
+            <a href="https://www.instagram.com/therealfelixinutero/" aria-label="Go to Instagram">
+                <i class="fab fa-instagram" aria-hidden="true">
+                </i>
+            </a>
+            <a href="https://www.pinterest.com.au/felixinutero/" aria-label="Go to Pinterest">
+                <i class="fab fa-pinterest-p" aria-hidden="true">
+                </i>
+            </a>
+            <a href="https://github.com/felixinutero/felixinuterodotcom" aria-label="Go to GitHub">
+                <i class="fab fa-github" aria-hidden="true">
+                </i>
+            </a>
+            <a href="mailto:felixinutero@gmail.com" aria-label="Send an Email">
+                <i class="far fa-envelope" aria-hidden="true">
+                </i>
+            </a>
+            <a href="https://www.linkedin.com/in/john-reynolds-7349a4134/" aria-label="Go to LinkedIn">
+                <i class="fab fa-linkedin" aria-hidden="true">
+                </i>
+            </a>
+        </footer>
+    </div>
+</body>
+
+</html>

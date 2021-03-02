@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Blog</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f1f1f0" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <!--build:css css/blog.min.css async-->
+    <link rel="stylesheet" href="css/blog.css" />
+    <link rel="stylesheet" href="css/prism.css" />
+    <!--endbuild-->
+    <style>
+        @font-face {
+            font-family: 'SavoyRoman';
+            src: url('css/fonts/Savoy-Roman-webfont.woff2') format('woff2');
+        }
+    </style>
+    <script src="js/fontawesome-all.min.js" async></script>
+</head>
+
+<body>
+    <!--build:js js/prism.min.js -->
+    <script src="js/prism.js"></script>
+    <!-- endbuild -->
+
+    <div class="wrapper">
+        <div class="container">
+            <img src="images/StockSnap_YM1V8KLYPK_crop.jpg" alt="Cloudy sky and sea between two towering rocky outcrops">
+            <div class="centered">
+                <header class="main-header">
+                    <a href="index.html">FELIXINUTERO</a>
+                </header>
+                <div class="main-nav">
+                    <div>
+                        <a href="index.html">WORK</a>
+                    </div>
+                    <div>
+                        <a href="blog.html">BLOG</a>
+                    </div>
+                    <div>
+                        <a href="aframe_text.html">INFO</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <article class="content" role="main">
+
+            <h1>JupyterLab!</h1>
+            <h3>30 JANUARY 2018</h3>
+            <p>Here's a
+                <a href="crypto_plotly.html">Jupyter notebook</a> based on
+                <a href="https://plot.ly/ipython-notebooks/big-data-analytics-with-pandas-and-sqlite/">this tutorial</a>. For my next trick, I'll figure out how to get it hosted on GitHub...</p>
+            <br>
+            <h1>FelixCoin?</h1>
+            <h3>7 JANUARY 2018</h3>
+            <p>Well, it looks like blockchain-based technology (e.g. Bitcoin) is about to change the world in a big way, so
+                I built a little example to clarify things a bit (although I still need to figure out exactly how that hashing
+                algorithm works...)
+                <figure>
+                    <figcaption>Blockchain (Javascript):</figcaption>
+                    <pre>
+                            <code class="language-js">
+    var float64ToInt64Binary = (function () {
+    
+    // Create union
+    var flt64 = new Float64Array(1);
+    var uint16 = new Uint16Array(flt64.buffer);
+    
+    var MAX_SAFE = 9007199254740991; // 2^53-1
+    var MAX_INT32 = 2147483648; // 2^31
+    
+    function uint16ToBinary() {
+    
+    // Generate padded binary string one word at a time
+    var bin64 = '';
+    for (var word = 0; word < 4; word++)
+    bin64 = uint16[word].toString(2).padStart(16, 0) + bin64;
+    
+    return bin64;
+    }
+    
+    return function float64ToInt64Binary(number) {
+    
+    // NaN would pass through Math.abs(number) > MAX_SAFE
+    if (!(Math.abs(number) <= MAX_SAFE))
+    throw new RangeError('Absolute value must be less than 2^53');
+    
+    var sign = number < 0 ? 1 : 0;
+    
+    // Shortcut using other answer for sufficiently small range
+    if (Math.abs(number) <= MAX_INT32)
+    return (number >>> 0).toString(2).padStart(64, sign);
+    
+    flt64[0] = number; // Little-endian byte ordering
+    
+    // Subtract bias from exponent bits
+    var exponent = ((uint16[3] & 0x7FF0) >> 4) - 1023;
+    
+    // Encode implicit leading bit of mantissa
+    uint16[3] |= 0x10;
+    
+    // Clear exponent and sign bit
+    uint16[3] &= 0x1F;
+    
+    // Check sign bit
+    if (sign === 1) {
+    
+    // Apply two's complement
+    uint16[0] ^= 0xFFFF;
+    uint16[1] ^= 0xFFFF;
+    uint16[2] ^= 0xFFFF;
+    uint16[3] ^= 0xFFFF;
+    
+    // Propagate carry bit and apply integer overflow
+    for (var word = 0; word < 3 && uint16[word] === 0xFFFF; word++)
+        uint16[word] = 0;
+    
+    // Complete increment
+    uint16[word]++
+    }
+    
+    // Keep only integer part of mantissa
+    var bin64 = uint16ToBinary().substr(11, Math.max(exponent, 0));
+    
+    // Sign-extend binary string
+    return bin64.padStart(64, sign);
+    }
+    })();
+    
+    String.prototype.hashCode = function () {
+    
+    var hash = 0;
+    if (this.length === 0) // Strict Equality Comparison (===): same value & type
+    return hash;
+    
+    console.log("this: " + this.toString());
+    
+    var chr;
+    for (var i = 0; i < this.length; i++) {
+    
+    chr = this.charCodeAt(i); // Return Unicode (UTF-16) of specified character
+    console.log("this(" + i + ") chr: " + this[i].toString());
+    console.log("this(" + i + ") uni: " + chr);
+    console.log("this(" + i + ") bin: " + float64ToInt64Binary(chr));
+    console.log("");
+    
+    // Bitwise Left Shift operator (<<): 
+    //   1. Shifts the first operand the specified number of bits to the left 
+    //   2. Excess bits shifted off to the left are discarded
+    //   3. Zero bits are shifted in from the right
+    hash = ((hash << 5) - hash) + chr;
+    
+    // Bitwise OR operator (|) performs the OR operation on each pair of bits 
+    hash |= 0;;
+    }
+    return hash;
+    };
+    
+    function Block(previousHash, transactions) {
+    
+    this.previousHash = previousHash;
+    this.transactions = transactions;
+    
+    var contents = [
+    previousHash,
+    transactions.toString().hashCode()
+    ];
+    
+    var blockHash = contents.toString().hashCode();
+    
+    function getPreviousHash() {
+    return previousHash;
+    }
+    
+    function getTransactions() {
+    return transactions;
+    }
+    
+    function getBlockHash() {
+    return blockHash;
+    }
+    
+    this.getPreviousHash = getPreviousHash;
+    this.getTransactions = getTransactions;
+    this.getBlockHash = getBlockHash;
+    }
+    
+    var blockchain = [];
+    
+    // var genesisTransactions = ["Bob sent Laura 10 bitcoin", "Dale sent Harry 7 bitcoin"];
+    var genesisTransactions = ["a", "b"]; // Unicode: a = U+0061, b = U + 0062.
+    var genesisBlock = new Block(0, genesisTransactions);
+    blockchain.push(genesisBlock);
+    
+    // var block2Transactions = ["David sent Bob 10 bitcoin", "Windom sent Bob 7 bitcoin"];
+    var block2Transactions = ["b", "c"]; // Unicode: b = U + 0062, c = U + 0063.
+    var block2 = new Block(genesisBlock.getBlockHash(), block2Transactions);
+    blockchain.push(block2);
+    
+    console.log("blockchain[0].getPreviousHash(): " + blockchain[0].getPreviousHash());
+    console.log("blockchain[0].getTransactions(): " + blockchain[0].getTransactions());
+    console.log("blockchain[0].getBlockHash(): " + blockchain[0].getBlockHash());
+    console.log("");
+    
+    console.log("blockchain[1].getPreviousHash(): " + blockchain[1].getPreviousHash());
+    console.log("blockchain[1].getTransactions(): " + blockchain[1].getTransactions());
+    console.log("blockchain[1].getBlockHash(): " + blockchain[1].getBlockHash());
+    console.log("");
+                            </code>
+                        </pre>
+                </figure>
+            </p>
+            <script>
+                var float64ToInt64Binary = (function () {
+
+                    // Create union
+                    var flt64 = new Float64Array(1);
+                    var uint16 = new Uint16Array(flt64.buffer);
+
+                    var MAX_SAFE = 9007199254740991; // 2^53-1
+                    var MAX_INT32 = 2147483648; // 2^31
+
+                    function uint16ToBinary() {
+
+                        // Generate padded binary string one word at a time
+                        var bin64 = '';
+                        for (var word = 0; word < 4; word++)
+                            bin64 = uint16[word].toString(2).padStart(16, 0) + bin64;
+
+                        return bin64;
+                    }
+
+                    return function float64ToInt64Binary(number) {
+
+                        // NaN would pass through Math.abs(number) > MAX_SAFE
+                        if (!(Math.abs(number) <= MAX_SAFE))
+                            throw new RangeError('Absolute value must be less than 2^53');
+
+                        var sign = number < 0 ? 1 : 0;
+
+                        // Shortcut using other answer for sufficiently small range
+                        if (Math.abs(number) <= MAX_INT32)
+                            return (number >>> 0).toString(2).padStart(64, sign);
+
+                        flt64[0] = number; // Little-endian byte ordering
+
+                        // Subtract bias from exponent bits
+                        var exponent = ((uint16[3] & 0x7FF0) >> 4) - 1023;
+
+                        // Encode implicit leading bit of mantissa
+                        uint16[3] |= 0x10;
+
+                        // Clear exponent and sign bit
+                        uint16[3] &= 0x1F;
+
+                        // Check sign bit
+                        if (sign === 1) {
+
+                            // Apply two's complement
+                            uint16[0] ^= 0xFFFF;
+                            uint16[1] ^= 0xFFFF;
+                            uint16[2] ^= 0xFFFF;
+                            uint16[3] ^= 0xFFFF;
+
+                            // Propagate carry bit and apply integer overflow
+                            for (var word = 0; word < 3 && uint16[word] === 0xFFFF; word++)
+                                uint16[word] = 0;
+
+                            // Complete increment
+                            uint16[word]++
+                        }
+
+                        // Keep only integer part of mantissa
+                        var bin64 = uint16ToBinary().substr(11, Math.max(exponent, 0));
+
+                        // Sign-extend binary string
+                        return bin64.padStart(64, sign);
+                    }
+                })();
+
+                String.prototype.hashCode = function () {
+
+                    var hash = 0;
+                    if (this.length === 0) // Strict Equality Comparison (===): same value & type
+                        return hash;
+
+                    console.log("this: " + this.toString());
+
+                    var chr;
+                    for (var i = 0; i < this.length; i++) {
+
+                        chr = this.charCodeAt(i); // Return Unicode (UTF-16) of specified character
+                        console.log("this(" + i + ") chr: " + this[i].toString());
+                        console.log("this(" + i + ") uni: " + chr);
+                        console.log("this(" + i + ") bin: " + float64ToInt64Binary(chr));
+                        console.log("");
+
+                        // Bitwise Left Shift operator (<<): 
+                        //   1. Shifts the first operand the specified number of bits to the left 
+                        //   2. Excess bits shifted off to the left are discarded
+                        //   3. Zero bits are shifted in from the right
+                        hash = ((hash << 5) - hash) + chr;
+
+                        // Bitwise OR operator (|) performs the OR operation on each pair of bits 
+                        hash |= 0;;
+                    }
+                    return hash;
+                };
+
+                function Block(previousHash, transactions) {
+
+                    this.previousHash = previousHash;
+                    this.transactions = transactions;
+
+                    var contents = [
+                        previousHash,
+                        transactions.toString().hashCode()
+                    ];
+
+                    var blockHash = contents.toString().hashCode();
+
+                    function getPreviousHash() {
+                        return previousHash;
+                    }
+
+                    function getTransactions() {
+                        return transactions;
+                    }
+
+                    function getBlockHash() {
+                        return blockHash;
+                    }
+
+                    this.getPreviousHash = getPreviousHash;
+                    this.getTransactions = getTransactions;
+                    this.getBlockHash = getBlockHash;
+                }
+
+                var blockchain = [];
+
+                // var genesisTransactions = ["Bob sent Laura 10 bitcoin", "Dale sent Harry 7 bitcoin"];
+                var genesisTransactions = ["a", "b"]; // Unicode: a = U+0061, b = U + 0062.
+                var genesisBlock = new Block(0, genesisTransactions);
+                blockchain.push(genesisBlock);
+
+                // var block2Transactions = ["David sent Bob 10 bitcoin", "Windom sent Bob 7 bitcoin"];
+                var block2Transactions = ["b", "c"]; // Unicode: b = U + 0062, c = U + 0063.
+                var block2 = new Block(genesisBlock.getBlockHash(), block2Transactions);
+                blockchain.push(block2);
+
+                console.log("blockchain[0].getPreviousHash(): " + blockchain[0].getPreviousHash());
+                console.log("blockchain[0].getTransactions(): " + blockchain[0].getTransactions());
+                console.log("blockchain[0].getBlockHash(): " + blockchain[0].getBlockHash());
+                console.log("");
+
+                console.log("blockchain[1].getPreviousHash(): " + blockchain[1].getPreviousHash());
+                console.log("blockchain[1].getTransactions(): " + blockchain[1].getTransactions());
+                console.log("blockchain[1].getBlockHash(): " + blockchain[1].getBlockHash());
+                console.log("");
+            </script>
+            <div class="separator"></div>
+            <h2>Older Posts</h2>
+            <p>
+                <ul>
+                    <li>
+                        <a href="blog010118.html">Good Riddance, 2017!</a>
+                    </li>
+                    <li>
+                        <a href="blog311217.html">AI + WebXR = ?</a>
+                    </li>
+                    <li>
+                        <a href="blog031217.html">Progressive Web Apps, and Physics with Three.js</a>
+                    </li>
+                    <li>
+                        <a href="blog211117.html">A-Frame v. Three.js Revisited</a>
+                    </li>
+                    <li>
+                        <a href="blog201117.html">Design</a>
+                    </li>
+                    <li>
+                        <a href="blog181117.html">Sass, Gulp, FileZilla, and a Bunch of Other Things</a>
+                    </li>
+                    <li>
+                        <a href="blog171117.html">What Now? Changing Goals and Moving Toward the Future</a>
+                    </li>
+                </ul>
+                <br>
+            </p>
+        </article>
+        <footer class="main-footer">
+            <a href="https://twitter.com/felixinutero" aria-label="Go to Twitter">
+                <i class="fab fa-twitter" aria-hidden="true">
+                </i>
+            </a>
+            <a href="https://www.instagram.com/therealfelixinutero/" aria-label="Go to Instagram">
+                <i class="fab fa-instagram" aria-hidden="true">
+                </i>
+            </a>
+            <a href="https://www.pinterest.com.au/felixinutero/" aria-label="Go to Pinterest">
+                <i class="fab fa-pinterest-p" aria-hidden="true">
+                </i>
+            </a>
+            <a href="https://github.com/felixinutero/felixinuterodotcom" aria-label="Go to GitHub">
+                <i class="fab fa-github" aria-hidden="true">
+                </i>
+            </a>
+            <a href="mailto:felixinutero@gmail.com" aria-label="Send an Email">
+                <i class="far fa-envelope" aria-hidden="true">
+                </i>
+            </a>
+            <a href="https://www.linkedin.com/in/john-reynolds-7349a4134/" aria-label="Go to LinkedIn">
+                <i class="fab fa-linkedin" aria-hidden="true">
+                </i>
+            </a>
+        </footer>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>SPIDR</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!-- Origin Trial Token, feature = WebVR (For Chrome M62+), origin = https://felixinutero.com, expires = 2018-02-22 -->
+    <meta http-equiv="origin-trial" data-feature="WebVR (For Chrome M62+)" data-expires="2018-02-22" content="AijjIc+H1PiFpsGO8EGncPpKKcm+uD0Fxh52XnGYeKh7RlvxBPmJTWEHA+nCskrMKK5UVdGZ799lwa+7n1QIWgQAAABoeyJvcmlnaW4iOiJodHRwczovL2ZlbGl4aW51dGVyby5jb206NDQzIiwiZmVhdHVyZSI6IldlYlZSMS4xTTYyIiwiZXhwaXJ5IjoxNTE5Mjc0NjA1LCJpc1N1YmRvbWFpbiI6dHJ1ZX0=">
+    <meta name="theme-color" content="#505050" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="container"></div>
+
+    <script src="js/three.min.js"></script>
+    <script src="js/libs/ammo.min.js"></script>
+    <script src="js/controls/OrbitControls.min.js"></script>
+
+    <script>
+        // Graphics variables
+        var container;
+        var camera, controls, scene, renderer;
+        var textureLoader;
+        var clock = new THREE.Clock();
+
+        // Physics variables
+        var gravityConstant = -9.8;
+        var collisionConfiguration;
+        var dispatcher;
+        var broadphase;
+        var solver;
+        var softBodySolver;
+        var physicsWorld;
+        var rigidBodies = [];
+        var margin = 0.05;
+        var transformAux1 = new Ammo.btTransform();
+        var time = 0;
+        var hinge1, hinge1_2, hinge2, hinge2_2, hinge3, hinge3_2, hinge4, hinge4_2, hinge5, hinge5_2, hinge6, hinge6_2,
+            hinge7, hinge7_2, hinge8, hinge8_2;
+        var armMovement = 0;
+        var legMovement = 0;
+
+        init();
+        animate();
+
+        function init() {
+            initGraphics();
+            initPhysics();
+            createObjects();
+            initInput();
+        }
+
+        function initGraphics() {
+
+            container = document.getElementById('container');
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x00BFFF);
+
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.set(-7, 5, 8);
+
+            controls = new THREE.OrbitControls(camera);
+            controls.target.set(0, 2, 0);
+            controls.update();
+
+            renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+
+            textureLoader = new THREE.TextureLoader();
+
+            var ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight);
+
+            var light = new THREE.DirectionalLight(0xffffff, 1);
+            light.position.set(-10, 10, 5);
+            light.castShadow = true;
+
+            var d = 10;
+            light.shadow.camera.left = -d;
+            light.shadow.camera.right = d;
+            light.shadow.camera.top = d;
+            light.shadow.camera.bottom = -d;
+
+            light.shadow.camera.near = 2;
+            light.shadow.camera.far = 32;
+
+            light.shadow.mapSize.x = 2048;
+            light.shadow.mapSize.y = 2048;
+
+            scene.add(light);
+
+            container.appendChild(renderer.domElement);
+
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function initPhysics() {
+
+            // Physics configuration
+            collisionConfiguration = new Ammo.btSoftBodyRigidBodyCollisionConfiguration();
+            dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
+            broadphase = new Ammo.btDbvtBroadphase();
+            solver = new Ammo.btSequentialImpulseConstraintSolver();
+            softBodySolver = new Ammo.btDefaultSoftBodySolver();
+            physicsWorld = new Ammo.btSoftRigidDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration,
+                softBodySolver);
+            physicsWorld.setGravity(new Ammo.btVector3(0, gravityConstant, 0));
+            physicsWorld.getWorldInfo().set_m_gravity(new Ammo.btVector3(0, gravityConstant, 0));
+        }
+
+        function createObjects() {
+
+            var pos = new THREE.Vector3();
+            var quat = new THREE.Quaternion();
+
+            // Ground
+            pos.set(0, 0, 0);
+            quat.set(0, 0, 0, 1);
+
+            var ground = new THREE.Mesh(new THREE.BoxBufferGeometry(40, 1, 40, 1, 1, 1), new THREE.MeshPhongMaterial({
+                color: 0xB2B0AE
+            }));
+            var groundShape = new Ammo.btBoxShape(new Ammo.btVector3(40 * 0.5, 1 * 0.5, 40 * 0.5));
+            groundShape.setMargin(margin);
+            createRigidBody(ground, groundShape, 0, pos, quat);
+            textureLoader.load("images/grid.png", function (texture) {
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(40, 40);
+                ground.material.map = texture;
+                ground.material.needsUpdate = true;
+            });
+            ground.castShadow = true;
+            ground.receiveShadow = true;
+
+            // Spidr
+            var xMass = 1;
+            var xMaterial = new THREE.MeshPhongMaterial({
+                color: 0xF8F8F7
+            });
+
+            pos.set(0, 4, 0);
+            var body = new THREE.Mesh(new THREE.BoxBufferGeometry(4.5, 0.5, 2), xMaterial);
+            var bodyShape = new Ammo.btBoxShape(new Ammo.btVector3(4.5 * 0.5, 0.5 * 0.5, 2 * 0.5));
+            bodyShape.setMargin(margin);
+            createRigidBody(body, bodyShape, xMass, pos, quat);
+            body.castShadow = true;
+            body.receiveShadow = true;
+
+            pos.set(-2, 3.7, 1.7);
+            var leg1 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            var legShape = new Ammo.btBoxShape(new Ammo.btVector3(0.2 * 0.5, 2 * 0.5, 0.2 * 0.5));
+            legShape.setMargin(margin);
+            createRigidBody(leg1, legShape, xMass, pos, quat);
+            leg1.rotation.x = 2;
+            leg1.castShadow = true;
+            leg1.receiveShadow = true;
+
+            // pos.set(-2, 2.38, 2.8);
+            // var leg1_2 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            // createRigidBody(leg1_2, legShape, xMass, pos, quat);
+            // leg1_2.rotation.x = 2.9;
+            // leg1_2.castShadow = true;
+            // leg1_2.receiveShadow = true;
+
+            pos.set(-0.666, 3.7, 1.7);
+            var leg2 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            createRigidBody(leg2, legShape, xMass, pos, quat);
+            leg2.rotation.x = 2;
+            leg2.castShadow = true;
+            leg2.receiveShadow = true;
+
+            // pos.set(-0.666, 2.38, 2.8);
+            // var leg2_2 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            // createRigidBody(leg2_2, legShape, xMass, pos, quat);
+            // leg2_2.rotation.x = 2.9;
+            // leg2_2.castShadow = true;
+            // leg2_2.receiveShadow = true;
+
+            pos.set(0.666, 3.7, 1.7);
+            var leg3 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            createRigidBody(leg3, legShape, xMass, pos, quat);
+            leg3.rotation.x = 2;
+            leg3.castShadow = true;
+            leg3.receiveShadow = true;
+
+            // pos.set(0.666, 2.38, 2.8);
+            // var leg3_2 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            // createRigidBody(leg3_2, legShape, xMass, pos, quat);
+            // leg3_2.rotation.x = 2.9;
+            // leg3_2.castShadow = true;
+            // leg3_2.receiveShadow = true;
+
+            pos.set(2, 3.7, 1.7);
+            var leg4 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            createRigidBody(leg4, legShape, xMass, pos, quat);
+            leg4.rotation.x = 2;
+            leg4.castShadow = true;
+            leg4.receiveShadow = true;
+
+            // pos.set(2, 2.38, 2.8);
+            // var leg4_2 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            // createRigidBody(leg4_2, legShape, xMass, pos, quat);
+            // leg4_2.rotation.x = 2.9;
+            // leg4_2.castShadow = true;
+            // leg4_2.receiveShadow = true;
+
+            pos.set(-2, 3.7, -1.7);
+            var leg5 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            createRigidBody(leg5, legShape, xMass, pos, quat);
+            leg5.rotation.x = -2;
+            leg5.castShadow = true;
+            leg5.receiveShadow = true;
+
+            // pos.set(-2, 2.38, -2.8);
+            // var leg5_2 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            // createRigidBody(leg5_2, legShape, xMass, pos, quat);
+            // leg5_2.rotation.x = -2.9;
+            // leg5_2.castShadow = true;
+            // leg5_2.receiveShadow = true;
+
+            pos.set(-0.666, 3.7, -1.7);
+            var leg6 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            createRigidBody(leg6, legShape, xMass, pos, quat);
+            leg6.rotation.x = -2;
+            leg6.castShadow = true;
+            leg6.receiveShadow = true;
+
+            // pos.set(-0.666, 2.38, -2.8);
+            // var leg6_2 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            // createRigidBody(leg6_2, legShape, xMass, pos, quat);
+            // leg6_2.rotation.x = -2.9;
+            // leg6_2.castShadow = true;
+            // leg6_2.receiveShadow = true;
+
+            pos.set(0.666, 3.7, -1.7);
+            var leg7 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            createRigidBody(leg7, legShape, xMass, pos, quat);
+            leg7.rotation.x = -2;
+            leg7.castShadow = true;
+            leg7.receiveShadow = true;
+
+            // pos.set(0.666, 2.38, -2.8);
+            // var leg7_2 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            // createRigidBody(leg7_2, legShape, xMass, pos, quat);
+            // leg7_2.rotation.x = -2.9;
+            // leg7_2.castShadow = true;
+            // leg7_2.receiveShadow = true;
+
+            pos.set(2, 3.7, -1.7);
+            var leg8 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            createRigidBody(leg8, legShape, xMass, pos, quat);
+            leg8.rotation.x = -2;
+            leg8.castShadow = true;
+            leg8.receiveShadow = true;
+
+            // pos.set(2, 2.38, -2.8);
+            // var leg8_2 = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 2, 0.2), xMaterial);
+            // createRigidBody(leg8_2, legShape, xMass, pos, quat);
+            // leg8_2.rotation.x = -2.9;
+            // leg8_2.castShadow = true;
+            // leg8_2.receiveShadow = true;
+
+            var axis1 = new Ammo.btVector3(1, 0, 0);
+            var axis1_2 = new Ammo.btVector3(0, 0, 1);
+            var axis2 = new Ammo.btVector3(-1, 0, 0);
+
+            var pivotA1 = new Ammo.btVector3(-2, 0, 1);
+            var pivotB1 = new Ammo.btVector3(0, 1, 0);
+            hinge1 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg1.userData.physicsBody, pivotA1, pivotB1,
+                axis1, axis1, true);
+            physicsWorld.addConstraint(hinge1, true);
+            hinge1_2 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg1.userData.physicsBody, pivotA1,
+                pivotB1, axis1_2, axis1_2, true);
+            physicsWorld.addConstraint(hinge1_2, true);
+
+            var pivotA2 = new Ammo.btVector3(-0.666, 0, 1);
+            var pivotB2 = new Ammo.btVector3(0, 1, 0);
+            hinge2 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg2.userData.physicsBody, pivotA2, pivotB2,
+                axis1, axis1, true);
+            physicsWorld.addConstraint(hinge2, true);
+            // hinge2_2 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg2.userData.physicsBody, pivotA2, pivotB2, axis1_2, axis1_2, true);
+            // physicsWorld.addConstraint(hinge2_2, true);
+
+            var pivotA3 = new Ammo.btVector3(0.666, 0, 1);
+            var pivotB3 = new Ammo.btVector3(0, 1, 0);
+            hinge3 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg3.userData.physicsBody, pivotA3, pivotB3,
+                axis1, axis1, true);
+            physicsWorld.addConstraint(hinge3, true);
+            // hinge3_2 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg3.userData.physicsBody, pivotA3, pivotB3, axis1_2, axis1_2, true);
+            // physicsWorld.addConstraint(hinge3_2, true);
+
+            var pivotA4 = new Ammo.btVector3(2, 0, 1);
+            var pivotB4 = new Ammo.btVector3(0, 1, 0);
+            hinge4 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg4.userData.physicsBody, pivotA4, pivotB4,
+                axis1, axis1, true);
+            physicsWorld.addConstraint(hinge4, true);
+            // hinge4_2 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg4.userData.physicsBody, pivotA4, pivotB4, axis1_2, axis1_2, true);
+            // physicsWorld.addConstraint(hinge4_2, true);
+
+            var pivotA5 = new Ammo.btVector3(-2, 0, -1);
+            var pivotB5 = new Ammo.btVector3(0, 1, 0);
+            hinge5 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg5.userData.physicsBody, pivotA5, pivotB5,
+                axis2, axis2, true);
+            physicsWorld.addConstraint(hinge5, true);
+            // hinge5_2 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg5.userData.physicsBody, pivotA5, pivotB5, axis1_2, axis1_2, true);
+            // physicsWorld.addConstraint(hinge5_2, true);
+
+            var pivotA6 = new Ammo.btVector3(-0.666, 0, -1);
+            var pivotB6 = new Ammo.btVector3(0, 1, 0);
+            hinge6 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg6.userData.physicsBody, pivotA6, pivotB6,
+                axis2, axis2, true);
+            physicsWorld.addConstraint(hinge6, true);
+            // hinge6_2 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg6.userData.physicsBody, pivotA6, pivotB6, axis1_2, axis1_2, true);
+            // physicsWorld.addConstraint(hinge6_2, true);
+
+            var pivotA7 = new Ammo.btVector3(0.666, 0, -1);
+            var pivotB7 = new Ammo.btVector3(0, 1, 0);
+            hinge7 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg7.userData.physicsBody, pivotA7, pivotB7,
+                axis2, axis2, true);
+            physicsWorld.addConstraint(hinge7, true);
+            // hinge7_2 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg7.userData.physicsBody, pivotA7, pivotB7, axis1_2, axis1_2, true);
+            // physicsWorld.addConstraint(hinge7_2, true);
+
+            var pivotA8 = new Ammo.btVector3(2, 0, -1);
+            var pivotB8 = new Ammo.btVector3(0, 1, 0);
+            hinge8 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg8.userData.physicsBody, pivotA8, pivotB8,
+                axis2, axis2, true);
+            physicsWorld.addConstraint(hinge8, true);
+            // hinge8_2 = new Ammo.btHingeConstraint(body.userData.physicsBody, leg8.userData.physicsBody, pivotA8, pivotB8, axis1_2, axis1_2, true);
+            // physicsWorld.addConstraint(hinge8_2, true);
+        }
+
+        function createRigidBody(threeObject, physicsShape, mass, pos, quat) {
+
+            threeObject.position.copy(pos);
+            threeObject.quaternion.copy(quat);
+
+            var transform = new Ammo.btTransform();
+            transform.setIdentity();
+            transform.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
+            transform.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
+            var motionState = new Ammo.btDefaultMotionState(transform);
+
+            var localInertia = new Ammo.btVector3(0, 0, 0);
+            physicsShape.calculateLocalInertia(mass, localInertia);
+
+            var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, physicsShape, localInertia);
+            var body = new Ammo.btRigidBody(rbInfo);
+
+            threeObject.userData.physicsBody = body;
+
+            scene.add(threeObject);
+
+            if (mass > 0) {
+                rigidBodies.push(threeObject);
+
+                // Disable deactivation
+                body.setActivationState(4);
+            }
+            physicsWorld.addRigidBody(body);
+        }
+
+        function initInput() {
+            window.addEventListener('keydown', function (event) {
+                switch (event.keyCode) {
+                    case 81: // Q
+                        armMovement = 1;
+                        break;
+                    case 65: // A
+                        armMovement = -1;
+                        break;
+                    case 87: // W
+                        legMovement = 1;
+                        break;
+                    case 83: // S
+                        legMovement = -1;
+                        break;
+                }
+            }, false);
+
+            window.addEventListener('keyup', function (event) {
+                armMovement = 0;
+                legMovement = 0;
+            }, false);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            render();
+        }
+
+        function render() {
+            var deltaTime = clock.getDelta();
+            updatePhysics(deltaTime);
+            renderer.render(scene, camera);
+            time += deltaTime;
+        }
+
+        function updatePhysics(deltaTime) {
+
+            // Hinge control
+            hinge1.enableAngularMotor(true, legMovement, 50);
+            // hinge1_2.enableAngularMotor(true, armMovement, 50);
+
+            hinge2.enableAngularMotor(true, legMovement, 50);
+            // hinge2_2.enableAngularMotor(true, armMovement, 50);
+
+            hinge3.enableAngularMotor(true, legMovement, 50);
+            // hinge3_2.enableAngularMotor(true, armMovement, 50);
+
+            hinge4.enableAngularMotor(true, legMovement, 50);
+            // hinge4_2.enableAngularMotor(true, armMovement, 50);
+
+            hinge5.enableAngularMotor(true, legMovement, 50);
+            // hinge5_2.enableAngularMotor(true, armMovement, 50);
+
+            hinge6.enableAngularMotor(true, legMovement, 50);
+            // hinge6_2.enableAngularMotor(true, armMovement, 50);
+
+            hinge7.enableAngularMotor(true, legMovement, 50);
+            // hinge7_2.enableAngularMotor(true, armMovement, 50);
+
+            hinge8.enableAngularMotor(true, legMovement, 50);
+            // hinge8_2.enableAngularMotor(true, armMovement, 50);
+
+            // Step world
+            physicsWorld.stepSimulation(deltaTime, 10);
+
+            // Update rigid bodies
+            for (var i = 0, il = rigidBodies.length; i < il; i++) {
+                var objThree = rigidBodies[i];
+                var objPhys = objThree.userData.physicsBody;
+                var ms = objPhys.getMotionState();
+                if (ms) {
+                    ms.getWorldTransform(transformAux1);
+                    var p = transformAux1.getOrigin();
+                    var q = transformAux1.getRotation();
+                    objThree.position.set(p.x(), p.y(), p.z());
+                    objThree.quaternion.set(q.x(), q.y(), q.z(), q.w());
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
