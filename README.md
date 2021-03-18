@@ -1,4 +1,4 @@
-# Running the website #
+## Running the website...
 
   1. Clone the repository or download the ZIP and extract the files  
   2. Open a terminal and cd into the source directory 
