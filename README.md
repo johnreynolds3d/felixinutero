@@ -1,4 +1,4 @@
-## A Progressive Web App that I created as my personal website/portfolio a few years ago. Unfortunately WebVR is no longer a thing. 
+## A Progressive Web App that I created as my personal website/portfolio a few years ago; unfortunately WebVR is no longer a thing. 
 
 ### Running the website:
 
