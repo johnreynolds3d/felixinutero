@@ -1,6 +1,6 @@
-## A VR Progressive Web App that I created as my personal website/portfolio a few years back. Unfortunately WebVR is no longer a thing. 
+## A Progressive Web App that I created as my personal website/portfolio a few years ago. Unfortunately WebVR is no longer a thing. 
 
-### Running the website
+### Running the website:
 
   1. Clone the repository or download the ZIP and extract the files  
   2. Open a terminal and cd into the source directory 
