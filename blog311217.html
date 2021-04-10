@@ -59,28 +59,29 @@
             </p>
             <br>
             <p>
-                <h2>Lab 0: Sorting Algorithms</h2>
-                <ol>
-                    <li>Implement the Insertion Sort algorithm.</li>
-                    <li>Build a program to test your sorting algorithm. It should generate random lists of integers of various
-                        sizes, and then:
-                        <ol class="alpha">
-                            <li>Check list is in nondescending order</li>
-                            <li>Check set of elements is same as in original list</li>
-                            <li>Record time taken to sort</li>
-                        </ol>
-                    </li>
-                    <li>Implement a O(n log n) algorithm (Merge Sort, Quick Sort, Heap Sort, etc.) and compare it to your Insertion
-                        Sort algorithm.</li>
-                    <li>Research
-                        <i>Radix Sort</i>, then write and test your own implementation.</li>
-                    <li>Try to generate lists of integers where Radix Sort will out-perform your O(n log n) algorithm.</li>
-                </ol>
+            <h2>Lab 0: Sorting Algorithms</h2>
+            <ol>
+                <li>Implement the Insertion Sort algorithm.</li>
+                <li>Build a program to test your sorting algorithm. It should generate random lists of integers of various
+                    sizes, and then:
+                    <ol class="alpha">
+                        <li>Check list is in nondescending order</li>
+                        <li>Check set of elements is same as in original list</li>
+                        <li>Record time taken to sort</li>
+                    </ol>
+                </li>
+                <li>Implement a O(n log n) algorithm (Merge Sort, Quick Sort, Heap Sort, etc.) and compare it to your Insertion
+                    Sort algorithm.</li>
+                <li>Research
+                    <i>Radix Sort</i>, then write and test your own implementation.
+                </li>
+                <li>Try to generate lists of integers where Radix Sort will out-perform your O(n log n) algorithm.</li>
+            </ol>
             </p>
             <p> OK then, here we go...
-                <figure>
-                    <figcaption>Insertion Sort (pseudocode):</figcaption>
-                    <pre>
+            <figure>
+                <figcaption>Insertion Sort (pseudocode):</figcaption>
+                <pre>
                         <code class="language-js">
     procedure INSERTION-SORT(A)
         for j = 2 to A.length
@@ -92,11 +93,11 @@
             A[i + 1] = key
                         </code>
                     </pre>
-                </figure>
+            </figure>
 
-                <figure>
-                    <figcaption>Insertion Sort (Javascript):</figcaption>
-                    <pre>
+            <figure>
+                <figcaption>Insertion Sort (Javascript):</figcaption>
+                <pre>
                             <code class="language-js">
     function insertionSort(A) {
         for (var j = 1; j < A.length; j++) {
@@ -112,11 +113,11 @@
     }
                             </code>
                         </pre>
-                </figure>
-                </br>
-                <figure>
-                    <figcaption>Merge Sort (pseudocode):</figcaption>
-                    <pre>
+            </figure>
+            </br>
+            <figure>
+                <figcaption>Merge Sort (pseudocode):</figcaption>
+                <pre>
                                 <code class="language-js">
     procedure MERGE(A, p, q, r)
         n1 = q - p + 1
@@ -147,11 +148,11 @@
             MERGE(A, p, q, r)
                                 </code>
                             </pre>
-                </figure>
+            </figure>
 
-                <figure>
-                    <figcaption>Merge Sort (Javascript):</figcaption>
-                    <pre>
+            <figure>
+                <figcaption>Merge Sort (Javascript):</figcaption>
+                <pre>
                                 <code class="language-js">
     function merge(A, p, q, r) {
         var n1 = q - p + 1;
@@ -190,11 +191,11 @@
     }
                                 </code>
                             </pre>
-                </figure>
-                <br>
-                <figure>
-                    <figcaption>Counting Sort (pseudocode):</figcaption>
-                    <pre>
+            </figure>
+            <br>
+            <figure>
+                <figcaption>Counting Sort (pseudocode):</figcaption>
+                <pre>
                             <code class="language-js">
     procedure COUNTING-SORT(A, B, k)
         let C[0..k] be a new array
@@ -211,10 +212,10 @@
             C[A[j]] = C[A[j]] - 1
                             </code>
                         </pre>
-                </figure>
-                <figure>
-                    <figcaption>Counting Sort (Javascript):</figcaption>
-                    <pre>
+            </figure>
+            <figure>
+                <figcaption>Counting Sort (Javascript):</figcaption>
+                <pre>
                                 <code class="language-js">
     function countingSort(A, B, k) {
         var C = [];
@@ -233,7 +234,7 @@
     }
                                 </code>
                             </pre>
-                </figure>
+            </figure>
             </p>
             <br>
 
@@ -496,7 +497,7 @@
                 var ground = new THREE.Mesh(new THREE.BoxBufferGeometry(16, 0.2, 16, 1, 1, 1), new THREE.MeshPhongMaterial({
                     color: 0xB2B0AE
                 }));
-                textureLoader.load("images/grid.png", function (texture) {
+                textureLoader.load("images/grid.png", function(texture) {
                     texture.wrapS = THREE.RepeatWrapping;
                     texture.wrapT = THREE.RepeatWrapping;
                     texture.repeat.set(32, 32);
@@ -558,27 +559,27 @@
             </script>
         </article>
         <footer class="main-footer">
-            <a href="https://twitter.com/felixinutero" aria-label="Go to Twitter">
+            <a href="https://twitter.com/johnreynolds3d" aria-label="Go to Twitter">
                 <i class="fab fa-twitter" aria-hidden="true">
                 </i>
             </a>
-            <a href="https://www.instagram.com/therealfelixinutero/" aria-label="Go to Instagram">
-                <i class="fab fa-instagram" aria-hidden="true">
+            <a href="https://www.youtube.com/channel/UCBFxb7Z8LSTJYA_R69IRAqQ" aria-label="Go to YouTube">
+                <i class="fab fa-youtube" aria-hidden="true">
                 </i>
             </a>
-            <a href="https://www.pinterest.com.au/felixinutero/" aria-label="Go to Pinterest">
-                <i class="fab fa-pinterest-p" aria-hidden="true">
+            <a href="https://www.artstation.com/johnreynolds3d" aria-label="Go to Artstation">
+                <i class="fab fa-artstation" aria-hidden="true">
                 </i>
             </a>
-            <a href="https://github.com/felixinutero/felixinuterodotcom" aria-label="Go to GitHub">
+            <a href="https://github.com/johnreynolds3d" aria-label="Go to GitHub">
                 <i class="fab fa-github" aria-hidden="true">
                 </i>
             </a>
-            <a href="mailto:felixinutero@gmail.com" aria-label="Send an Email">
+            <a href="mailto:john@johnreynolds3d.com" aria-label="Send an Email">
                 <i class="far fa-envelope" aria-hidden="true">
                 </i>
             </a>
-            <a href="https://www.linkedin.com/in/john-reynolds-7349a4134/" aria-label="Go to LinkedIn">
+            <a href="https://www.linkedin.com/in/johnreynolds3d" aria-label="Go to LinkedIn">
                 <i class="fab fa-linkedin" aria-hidden="true">
                 </i>
             </a>
