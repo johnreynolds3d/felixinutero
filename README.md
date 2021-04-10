@@ -9,6 +9,8 @@
 
 ## Installation
 
+The easiest way to check this project out is simply by visiting https://johnreynolds3d.github.io in your browser (tested in Chrome), but if you *really* want to get under the hood and get your hands dirty...
+
   1.  Clone this repository  
       ```
       # git clone git@github.com:johnreynolds3d/johnreynolds3d.github.io.git
