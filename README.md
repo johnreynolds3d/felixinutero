@@ -1,6 +1,6 @@
-# felixinutero
+# johnreynolds3d 
 
-### A Progressive Web App that I created as my personal website/portfolio a few years ago
+### A Progressive Web App that I created as my personal website/portfolio a few years ago. I'm currently in the process of updating it.
 
 ![Screenshot](/img/index.png?raw=true "")
 ![Screenshot](/img/3worldsvr.png?raw=true "")
@@ -11,11 +11,11 @@
 
   1.  Clone this repository  
       ```
-      # git clone git@github.com:johnreynolds3d/felixinutero.git
+      # git clone git@github.com:johnreynolds3d/johnreynolds3d.github.io.git
       ```
   2.  cd into the source directory 
       ```
-      # cd felixinutero
+      # cd johnreynolds3d.github.io
       ```
   3.  Run the following command to start a server on port 8000
       ```
