@@ -2,172 +2,172 @@
 <html lang="en">
 
 <head>
-	<title>3worldsVR</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-	<!-- Origin Trial Token, feature = WebVR (For Chrome M62+), origin = https://felixinutero.com, expires = 2018-02-22 -->
-	<meta http-equiv="origin-trial" data-feature="WebVR (For Chrome M62+)" data-expires="2018-02-22" content="AijjIc+H1PiFpsGO8EGncPpKKcm+uD0Fxh52XnGYeKh7RlvxBPmJTWEHA+nCskrMKK5UVdGZ799lwa+7n1QIWgQAAABoeyJvcmlnaW4iOiJodHRwczovL2ZlbGl4aW51dGVyby5jb206NDQzIiwiZmVhdHVyZSI6IldlYlZSMS4xTTYyIiwiZXhwaXJ5IjoxNTE5Mjc0NjA1LCJpc1N1YmRvbWFpbiI6dHJ1ZX0=">
-	<meta name="theme-color" content="#303030" />
-	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-	<style>
-		body {
-			margin: 0;
-			overflow: hidden;
-		}
-	</style>
+    <title>3worldsVR</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!-- Origin Trial Token, feature = WebVR (For Chrome M62+), origin = https://felixinutero.com, expires = 2018-02-22 -->
+    <meta http-equiv="origin-trial" data-feature="WebVR (For Chrome M62+)" data-expires="2018-02-22" content="AijjIc+H1PiFpsGO8EGncPpKKcm+uD0Fxh52XnGYeKh7RlvxBPmJTWEHA+nCskrMKK5UVdGZ799lwa+7n1QIWgQAAABoeyJvcmlnaW4iOiJodHRwczovL2ZlbGl4aW51dGVyby5jb206NDQzIiwiZmVhdHVyZSI6IldlYlZSMS4xTTYyIiwiZXhwaXJ5IjoxNTE5Mjc0NjA1LCJpc1N1YmRvbWFpbiI6dHJ1ZX0=">
+    <meta name="theme-color" content="#303030" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
 </head>
 
 <body>
-	<div role="main">
+    <div role="main">
 
-		<script src="js/three.min.js"></script>
-		<script src="js/WebVR.min.js"></script>
+        <script src="js/three.min.js"></script>
+        <script src="js/WebVR.min.js"></script>
 
-		<script>
-			var clock = new THREE.Clock();
-			var container, camera, scene, renderer, room;
-			var circleGreen, circleRed, circleBlue, logo, crystal;
+        <script>
+            var clock = new THREE.Clock();
+            var container, camera, scene, renderer, room;
+            var circleGreen, circleRed, circleBlue, logo, crystal;
 
-			init();
-			animate();
+            init();
+            animate();
 
-			function init() {
+            function init() {
 
-				container = document.createElement('div');
-				document.body.appendChild(container);
+                container = document.createElement('div');
+                document.body.appendChild(container);
 
-				scene = new THREE.Scene();
-				scene.background = new THREE.CubeTextureLoader()
-					.setPath('images/cube/winter/')
-					.load(['px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg']);
-				scene.background.format = THREE.RGBFormat;
+                scene = new THREE.Scene();
+                scene.background = new THREE.CubeTextureLoader()
+                    .setPath('images/cube/winter/')
+                    .load(['px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg']);
+                scene.background.format = THREE.RGBFormat;
 
-				camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 10);
+                camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 10);
 
-				room = new THREE.Mesh(
-					new THREE.BoxGeometry(6, 6, 6, 8, 8, 8),
-					new THREE.MeshBasicMaterial({
-						color: 0x808080,
-						wireframe: false
-					})
-				);
-				scene.add(room);
+                room = new THREE.Mesh(
+                    new THREE.BoxGeometry(6, 6, 6, 8, 8, 8),
+                    new THREE.MeshBasicMaterial({
+                        color: 0x808080,
+                        wireframe: false
+                    })
+                );
+                scene.add(room);
 
-				var keyLight = new THREE.DirectionalLight(0xFFFFFF, 0.7);
-				keyLight.position.set(-4, 3, 9);
-				scene.add(keyLight);
+                var keyLight = new THREE.DirectionalLight(0xFFFFFF, 0.7);
+                keyLight.position.set(-4, 3, 9);
+                scene.add(keyLight);
 
-				var fillLight = new THREE.DirectionalLight(0xFFFFFF, 0.7);
-				fillLight.position.set(4, 3, 9);
-				scene.add(fillLight);
+                var fillLight = new THREE.DirectionalLight(0xFFFFFF, 0.7);
+                fillLight.position.set(4, 3, 9);
+                scene.add(fillLight);
 
-				var backLight = new THREE.DirectionalLight(0xFFFFFF, 0.7);
-				backLight.position.set(-2, 3, -9);
-				scene.add(backLight);
+                var backLight = new THREE.DirectionalLight(0xFFFFFF, 0.7);
+                backLight.position.set(-2, 3, -9);
+                scene.add(backLight);
 
-				var crystalGeometry = new THREE.DodecahedronGeometry(0.4);
-				var crystalMaterial = new THREE.MeshBasicMaterial({
-					color: 0xffffff,
-					envMap: scene.background,
-					refractionRatio: 0.7
-				});
-				crystalMaterial.envMap.mapping = THREE.CubeRefractionMapping;
+                var crystalGeometry = new THREE.DodecahedronGeometry(0.4);
+                var crystalMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xffffff,
+                    envMap: scene.background,
+                    refractionRatio: 0.7
+                });
+                crystalMaterial.envMap.mapping = THREE.CubeRefractionMapping;
 
-				crystal = new THREE.Mesh(crystalGeometry, crystalMaterial);
-				scene.add(crystal);
-				crystal.position.set(0, -0.1, -1.3);
+                crystal = new THREE.Mesh(crystalGeometry, crystalMaterial);
+                scene.add(crystal);
+                crystal.position.set(0, -0.1, -1.3);
 
-				circleGeometry = new THREE.CylinderBufferGeometry(0.09, 0.09, 0.015, 64);
-				circleGreen = new THREE.Mesh(circleGeometry, new THREE.MeshStandardMaterial({
-					color: 0x019924,
-					roughness: 0.5,
-					metalness: 1
-				}));
-				circleGreen.position.x = -0.701 - 0.1;
-				circleGreen.position.y = 0.24;
-				circleGreen.position.z = -0.8;
-				circleGreen.rotation.z = Math.PI / 2;
-				room.add(circleGreen);
+                circleGeometry = new THREE.CylinderBufferGeometry(0.09, 0.09, 0.015, 64);
+                circleGreen = new THREE.Mesh(circleGeometry, new THREE.MeshStandardMaterial({
+                    color: 0x019924,
+                    roughness: 0.5,
+                    metalness: 1
+                }));
+                circleGreen.position.x = -0.701 - 0.1;
+                circleGreen.position.y = 0.24;
+                circleGreen.position.z = -0.8;
+                circleGreen.rotation.z = Math.PI / 2;
+                room.add(circleGreen);
 
-				circleBlue = new THREE.Mesh(circleGeometry, new THREE.MeshStandardMaterial({
-					color: 0x0096FF,
-					roughness: 0.5,
-					metalness: 1
-				}));
-				circleBlue.position.x = -0.499 - 0.1;
-				circleBlue.position.y = 0.24;
-				circleBlue.position.z = -0.8;
-				circleBlue.rotation.z = Math.PI / 2;
-				room.add(circleBlue);
+                circleBlue = new THREE.Mesh(circleGeometry, new THREE.MeshStandardMaterial({
+                    color: 0x0096FF,
+                    roughness: 0.5,
+                    metalness: 1
+                }));
+                circleBlue.position.x = -0.499 - 0.1;
+                circleBlue.position.y = 0.24;
+                circleBlue.position.z = -0.8;
+                circleBlue.rotation.z = Math.PI / 2;
+                room.add(circleBlue);
 
-				circleRed = new THREE.Mesh(circleGeometry, new THREE.MeshStandardMaterial({
-					color: 0xFF2600,
-					roughness: 0.5,
-					metalness: 1
-				}));
-				circleRed.position.x = -0.6 - 0.1;
-				circleRed.position.y = 0.415;
-				circleRed.position.z = -0.8;
-				circleRed.rotation.z = Math.PI / 2;
-				room.add(circleRed);
+                circleRed = new THREE.Mesh(circleGeometry, new THREE.MeshStandardMaterial({
+                    color: 0xFF2600,
+                    roughness: 0.5,
+                    metalness: 1
+                }));
+                circleRed.position.x = -0.6 - 0.1;
+                circleRed.position.y = 0.415;
+                circleRed.position.z = -0.8;
+                circleRed.rotation.z = Math.PI / 2;
+                room.add(circleRed);
 
-				var loader = new THREE.FontLoader();
-				loader.load('css/fonts/droid_sans_regular.typeface.json', function (font) {
-					var textGeometry = new THREE.TextBufferGeometry('3worldsVR', {
-						font: font,
-						size: 0.2,
-						height: 0.02,
-						curveSegments: 64
-					});
-					var textMaterial = new THREE.MeshStandardMaterial({
-						color: 0x484848,
-						roughness: 0.5,
-						metalness: 1
-					});
-					logo = new THREE.Mesh(textGeometry, textMaterial);
-					logo.position.x = -0.47;
-					logo.position.y = 0.23;
-					logo.position.z = -0.8;
-					room.add(logo);
-				});
+                var loader = new THREE.FontLoader();
+                loader.load('css/fonts/droid_sans_regular.typeface.json', function(font) {
+                    var textGeometry = new THREE.TextBufferGeometry('3worldsVR', {
+                        font: font,
+                        size: 0.2,
+                        height: 0.02,
+                        curveSegments: 64
+                    });
+                    var textMaterial = new THREE.MeshStandardMaterial({
+                        color: 0x484848,
+                        roughness: 0.5,
+                        metalness: 1
+                    });
+                    logo = new THREE.Mesh(textGeometry, textMaterial);
+                    logo.position.x = -0.47;
+                    logo.position.y = 0.23;
+                    logo.position.z = -0.8;
+                    room.add(logo);
+                });
 
-				renderer = new THREE.WebGLRenderer({
-					antialias: true
-				});
-				renderer.setPixelRatio(window.devicePixelRatio);
-				renderer.setSize(window.innerWidth, window.innerHeight);
-				renderer.vr.enabled = true;
-				container.appendChild(renderer.domElement);
+                renderer = new THREE.WebGLRenderer({
+                    antialias: true
+                });
+                renderer.setPixelRatio(window.devicePixelRatio);
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.vr.enabled = true;
+                container.appendChild(renderer.domElement);
 
-				document.body.appendChild(WEBVR.createButton(renderer));
+                document.body.appendChild(WEBVR.createButton(renderer));
 
-				window.addEventListener('resize', onWindowResize, false);
-			}
+                window.addEventListener('resize', onWindowResize, false);
+            }
 
-			function onWindowResize() {
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
-				renderer.setSize(window.innerWidth, window.innerHeight);
-			}
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
 
-			function animate() {
-				renderer.animate(render);
-			}
+            function animate() {
+                renderer.animate(render);
+            }
 
-			function render() {
+            function render() {
 
-				circleGreen.rotation.y += 0.01;
-				circleBlue.rotation.y += 0.02;
-				circleRed.rotation.y += 0.04;
+                circleGreen.rotation.y += 0.01;
+                circleBlue.rotation.y += 0.02;
+                circleRed.rotation.y += 0.04;
 
-				crystal.rotation.x += 0.002;
-				crystal.rotation.y += 0.002;
-				crystal.rotation.z += 0.002;
+                crystal.rotation.x += 0.002;
+                crystal.rotation.y += 0.002;
+                crystal.rotation.z += 0.002;
 
-				renderer.render(scene, camera);
-			}
-		</script>
-	</div>
+                renderer.render(scene, camera);
+            }
+        </script>
+    </div>
 </body>
 
 </html>
