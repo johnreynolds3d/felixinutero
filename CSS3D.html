@@ -91,7 +91,7 @@
 
             var geometry = new THREE.SphereGeometry(500, 60, 40);
             var material = new THREE.MeshBasicMaterial({
-                map: new THREE.TextureLoader().load('images/sphere/CrabNebula.jpg')
+                map: new THREE.TextureLoader().load('images/sphere/CrabNebula.webp')
             });
             mesh = new THREE.Mesh(geometry, material);
             mesh.material.side = THREE.BackSide;
@@ -274,7 +274,7 @@
             var scene2 = new THREE.Scene();
             scene2.background = new THREE.CubeTextureLoader()
                 .setPath('images/cube/winter/')
-                .load(['px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg']);
+                .load(['px.webp', 'nx.webp', 'py.webp', 'ny.webp', 'pz.webp', 'nz.webp']);
 
             function resizeCanvasToDisplaySize2(force) {
                 var canvas = renderer2.domElement;

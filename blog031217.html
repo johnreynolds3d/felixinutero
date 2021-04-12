@@ -27,7 +27,7 @@
 
     <div class="wrapper">
         <div class="container">
-            <img src="images/StockSnap_YM1V8KLYPK_crop.jpg" alt="Cloudy sky and sea between two towering rocky outcrops">
+            <img src="images/StockSnap_YM1V8KLYPK_crop.webp" alt="Cloudy sky and sea between two towering rocky outcrops">
             <div class="centered">
                 <header class="main-header">
                     <a href="index.html">JOHNREYNOLDS3D</a>
@@ -64,7 +64,7 @@ gulp.task('generate-service-worker', function (callback) {
     var rootDir = 'dist';
 
     swPrecache.write(`${rootDir}/service-worker.js`, {
-        staticFileGlobs: [rootDir + '/**/*.{js,min.js,html,min.css,png,jpg,gif,webp,ico,svg,eot,ttf,woff,woff2,json}'],
+        staticFileGlobs: [rootDir + '/**/*.{js,min.js,html,min.css,png.webp,gif,webp,ico,svg,eot,ttf,woff,woff2,json}'],
         stripPrefix: rootDir
     }, callback);
 });</code>
