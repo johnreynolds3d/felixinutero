@@ -21,7 +21,7 @@ The easiest way to check this project out is simply by visiting https://johnreyn
       ```
   3.  Run the following command to start a server on port 8000
       ```
-      # python -m SimpleHTTPServer 8000 
+      # python3 -m http.server 
       ```
   4.  Open your web browser of choice (tested on Chrome) and enter the URL 
       'localhost:8000'; that should get you to the home page
