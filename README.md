@@ -2,10 +2,10 @@
 
 ### A Progressive Web App that I created as my personal website/portfolio a few years ago. I'm currently in the process of updating it.
 
-![Screenshot](/img/index.png?raw=true "")
-![Screenshot](/img/3worldsvr.png?raw=true "")
-![Screenshot](/img/css3d.png?raw=true "")
-![Screenshot](/img/info.png?raw=true "")
+![Screenshot](/img/index.webp?raw=true "")
+![Screenshot](/img/3worldsvr.webp?raw=true "")
+![Screenshot](/img/css3d.webp?raw=true "")
+![Screenshot](/img/info.webp?raw=true "")
 
 ## Installation
 
